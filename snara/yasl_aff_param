@@ -1,0 +1,3 @@
+#!yasl
+1 <= ? exit
+! # #(print "\n" print)
