@@ -1,0 +1,81 @@
+#!yasl
+
+// エラーメッセージを表示してexitする
+// スタックが [message, exit_status] のとき,
+// message が表示され, 終了ステータスは exit_status.
+{ print "\n":0 0:print exit } error_exit
+
+// 指定したスタックの要素数を出力する
+// スタックが [stack_no] のとき, スタック stack_no の要素数を出力する
+{
+	(
+		"#" 0:print
+		= 0:print
+		" = " 0:print
+		$0:#:0 0:print
+		"\n":0 0:print
+	):0
+} print_count
+
+// 指定したスタックの個数と中身を表示する
+// スタックが [stack_no] のとき, スタック stack_no が対象となる
+// ※スタックの中身を全て空にする
+{
+	= print_count
+	=:0
+	0:(
+		=
+		$0:#
+		0
+		>
+		? (
+			=
+			$0:# #(
+				=
+				=
+				$0:=
+				print "\n" print
+				$0:!
+			)
+			!
+		)
+	):0
+}	exhaust_stack
+
+// 数値が画面サイズとしてふさわしいかどうかをチェック
+// ふさわしくない場合はエラー終了する
+// 呼び出し時のスタックは[size]
+{
+	= 0 <= ? (1 "size must be positive!!" error_exit)
+}	is_valid_size
+
+// ---------------------------------------------------------------
+
+// argc = 3 であることを確認
+3 != ? (1 "just 2 arguments are needed!!" error_exit)
+
+!
+is_valid_size
+eval
+=:8
+!
+eval
+is_valid_size
+=:9
+!
+
+// [状況]
+// スタック8: [W]
+// スタック9: [W]
+// 他は空
+
+// 0 print_count
+// 1 print_count
+// 2 print_count
+// 3 print_count
+// 4 print_count
+// 5 print_count
+// 6 print_count
+// 7 print_count
+// 8 print_count
+// 9 print_count
