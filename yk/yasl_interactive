@@ -1,0 +1,10 @@
+#!yasl
+
+#!
+
+1
+@(
+	read
+	! eval
+	1 // infinite loop
+)
