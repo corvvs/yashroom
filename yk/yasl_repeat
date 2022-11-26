@@ -1,21 +1,23 @@
 #!yasl
 
+// in:  [some: any]
+// out: [i: int]
+{ 0 + }	to_i
+// -------------
+
 ! !
-eval =:1 !
+to_i
+// N > 0 かどうかチェック
+= 0 <= ? ("error: first arg must be a positive integer.\n" print 1 exit)
 
-1:=:1
-0:1
-1:<=:0
-? ("error\n" print 1 exit)
-
-#
-#(
-	1:=:2
-	2:#(
-		0:= 0:print
+// 処理開始
+# 1 > ?(
+	=:1 !
+	# #(
+		1:= #(= print)
+		"\n" print
+		!
+		1:1 1:+:1
 	)
-	"\n" print
-	0:!
-	1:1
-	1:+:1
+	1:!
 )

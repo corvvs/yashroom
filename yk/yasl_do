@@ -1,7 +1,17 @@
 #!yasl
+// in: [sep: string, ...elems: string]
+// in: [joined: string]
+{
+	=:8 !
+	1 @ (
+		# 1 > ? (
+			(= !):9 8:=:9 (= !):9 9:+:9 9:+
+			1
+		) : 0
+	)
+	8:!
+}	join_by
+// ---------------
 ! !
-=:1 ! =:2 ! =:3 !
-1:= " " 3:= " " 2:=
-+ + + +
-eval
-print
+3 ^ 2 ^
+" " join_by eval print "\n" print
