@@ -2,15 +2,27 @@
 { "error: " print print "\n" print 1 exit } error_exit
 { = = 0 + "" + != ? ("invalid int argument" error_exit) 0 + } to_i
 
-1 == ? ("usage: ./yasl_fact <num>" error_exit)
+2 != ? ("usage: ./yasl_fact <num>" error_exit)
 ! to_i
 = 0 < ? ("<num> must be >= 0" error_exit)
 
-0:(= =):1 
-! 1
-1:@(
- 1:=:0
- 0:(* = 0 <= ? ("overflow" error_exit) ):0
- 1:(1 - =):1
+{
+ (= =):9
+ 1 2 ^
+@(
+ 9:=
+ * = 0 <= ? ("overflow" error_exit) 
+ 9:(1 - =):9 9:=
 )
-print "\n" print
+} factorial_iterative
+
+{
+ = 1 <= ? ( ! 1 )
+ : (
+  = 1 - factorial_recursive
+  * = 0 <= ? ("overflow" error_exit) 
+ )
+} factorial_recursive
+
+factorial_recursive print "\n" print
+// factorial_iterative print "\n" print
