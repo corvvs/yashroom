@@ -3,5 +3,8 @@
 # !^
 " " 2 !^
 " " 4 !^
+" "
 # 1 - #+
-eval print "\n" print
+print_stack
+eval 
+print "\n" print
