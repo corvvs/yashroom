@@ -456,6 +456,101 @@ Programs = [
       },
     ],
   },
+
+  {
+    exe: "yasl_split",
+    cases: [
+      {
+        name: "ok_pdf1",
+        in: ["a", "ljksdpoiapoipoialljlaiuoiu"],
+        out: [
+          "ljksdpoi",
+          "poipoi",
+          "lljl",
+          "iuoiu",
+        ],
+      },
+      {
+        name: "ok_pdf2",
+        in: [" ", " Lorem ipsum dolor sit amet, consectetur adipiscing elit. "],
+        out: [
+          "Lorem",
+          "ipsum",
+          "dolor",
+          "sit",
+          "amet,",
+          "consectetur",
+          "adipiscing",
+          "elit.",
+        ],
+      },
+      {
+        name: "ok_no_separator",
+        in: ["X", "applepie is very sweet."],
+        out: ["applepie is very sweet."],
+      },
+      {
+        name: "ok_s_is_blank",
+        in: ["X", ""],
+        out: [],
+      },
+      {
+        name: "ok_all_separator",
+        in: ["x", "xxxxxxxxxxx"],
+        out: [],
+      },
+      {
+        name: "ok_single",
+        in: ["x", "xyx"],
+        out: ["y"],
+      },
+      {
+        name: "ok_an_separator",
+        in: ["x", "x"],
+        out: [],
+      },
+      {
+        name: "ko_more_args",
+        in: ["x", "apple", "banana"],
+        exit: 1,
+      },
+      {
+        name: "ko_no_args",
+        in: [],
+        exit: 1,
+      },
+      {
+        name: "ko_an_arg",
+        in: ["x"],
+        exit: 1,
+      },
+      {
+        name: "ko_blank_separator",
+        in: ["", "apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_long_separator",
+        in: ["ba", "banana"],
+        exit: 1,
+      },
+      {
+        name: "ko_character?1",
+        in: ["b ", "banana"],
+        exit: 1,
+      },
+      {
+        name: "ko_character?2",
+        in: [" b ", "banana"],
+        exit: 1,
+      },
+      {
+        name: "ok_long",
+        in: ["x", "banana" * 1234],
+        out: ["banana" * 1234],
+      },
+    ],
+  },
 ]
 
 def launch(script_name, cases)
