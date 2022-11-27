@@ -1,14 +1,97 @@
 #!yasl
 
-!
-!
-eval:1
-1
-1:=:0
+// in: [message: string]
+// message を表示し, ステータス1で終了する
+{ "error: " print print "\n" print 1 exit } error_exit
+
+{ 0 + } to_i
+{ "A" - 65 + } char_to_i
+
+// in use: c start end within
+// in:  [end: int, start: int, c: int]
+// out: [result: int(bool)]
+// `result` indicates that: start <= c && c <= end
+{
+	=:9 ! 2 ^ =:9 // in: [c, start], 9: [c, end]
+	<= // in: [start <= c], 9: [c, end]
+	9:>= // in: [start <= c, c <= end]
+	&&
+}	within
+
+// in:  [char: some]
+// out: [result: int(bool)]
+{
+	char_to_i "0" char_to_i "9" char_to_i within
+}	is_digit
+
+// in:  [char: some]
+// out: [result: int(bool)]
+{
+	char_to_i "A" char_to_i "Z" char_to_i within
+}	is_upper
+
+// in:  [char: some]
+// out: [result: int(bool)]
+{
+	char_to_i "a" char_to_i "z" char_to_i within
+}	is_lower
+
+// in:  [arg: string]
+// out: [result: int(bool)]
+{
+	=:9 !
+	9:][:9
+	9:!
+	1:8
+	// in: [], 8: [result: int(bool)], 9: [...chars: string]
+	1 @ (
+		// in: []
+		9:# 0 > 8:= && = ? (
+			// ループ継続
+			// in: [true]
+			9:= 9:!
+			is_digit
+			? ( 1:8 ) : ( 0:8 ) 8:&&:8
+		) : (
+			// in: [false]
+			8:= 2 !^
+		)
+	)
+	8:!
+}	are_digits
+
+// 階乗(再帰バージョン)
+// in:  [count: int]
+// out: [factorial: int]
+{
+	= 0 > ? (
+		= 1 - factorial
+		*
+	) : (! 1)
+}	factorial
+
+// 階乗(末尾再帰バージョン)
+// in:  [count: int, factorial: int]
+// out: [factorial: int]
+{
+	= 0 > ? (
+		=:1 * 1:1 1:- factorial_tc
+	) : (
+		!
+	)
+}	factorial_tc
+
+// --------------------
+
+! !
+# 1 != ? ( "just one argument has been needed." error_exit )
+
 =
-? #(
-	0:#:1
-	0:=:1
-	1:*:0
-)
-print "\n" print
+are_digits
+0 == ? ( "the argument doesn't seem to be an ingeter" error_exit )
+
+to_i
+= 0 < ? ( "the argument must be non-negative" error_exit )
+
+factorial print "\n" print
+// 1 2 ^ factorial_tc print "\n" print
