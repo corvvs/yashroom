@@ -135,7 +135,7 @@
 						63:0
 					) : (
 						// -> エラー
-						1:0 0:exit
+						"error: invalid char detected":0 error_exit
 					)
 				)
 			)
