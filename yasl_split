@@ -1,40 +1,24 @@
 #!yasl
+{ "error: " print print "\n" print 1 exit } error_exit
+
+3 != ? ("usage: ./yasl_split <separator> <string>" error_exit)
+! 
+[#] 1 != ? ("len of <separator> must be 1" error_exit)
 
 {
-	3:#:3
-	3:=:3 3:?(
-		"":4
-		3:#(3:=:4 4:+:4 3:!)
-		"\n":4 4:+:4
-		4:=:5
-		4:!
-	) : 3:!
-} tokenize
+ =:9
+ = # !^ + +
+ [#] 0 2 ^
+ #(
+  %]#[ 9:=:0
+  %==
+   ? (!     ! 8:(""):8) 
+   : (! =:8 ! 8:(+):8) 
+  (1 +)
+ )
+ ! ! 9:!
+ 8:(#:8 #(= !))
+} split
 
-3
-!= ? ( "error: just 2 arguments are needed\n" print exit )
-
-!
-
-][:1
-1:1 1:!=:1 1:? ( "error: separator is not an character\n":0 0:print exit )
-
-][
-= ? #(
-	0:=:2
-	1:=:2
-	// = print "\n" print
-	2:== ? (
-		// "is a separator\n" print
-		tokenize
-	) : (
-		// "is not a separator\n" print
-		0:=:3
-	)
-	!
-)
-tokenize
-
-5:#:5
-5:=:5
-5:? ( 5:#( 5:print ) )
+split
+# #(%? (print "\n" print) : !)
