@@ -1,0 +1,23 @@
+#!yasl
+{ "error: " print print "\n" print 1 exit } error_exit
+
+3 != ? ("usage: ./yasl_split <separator> <string>" error_exit)
+! 
+[#] 1 != ? ("len of <separator> must be 1" error_exit)
+
+{
+=:9
+= # !^ + +
+[#] 0 2 ^
+#(
+ %]#[ 9:=:0
+ %== ? (! ! 8:(""):8) 
+  : (! =:8 ! 8:(+):8) 
+ (1 +)
+)
+! ! 9:!
+8:(#:8 #(= !))
+} split
+
+split
+# #(%? (print "\n" print) : !)
