@@ -1,0 +1,40 @@
+#!yasl
+
+{
+	3:#:3
+	3:=:3 3:?(
+		"":4
+		3:#(3:=:4 4:+:4 3:!)
+		"\n":4 4:+:4
+		4:=:5
+		4:!
+	) : 3:!
+} tokenize
+
+3
+!= ? ( "error: just 2 arguments are needed\n" print exit )
+
+!
+
+][:1
+1:1 1:!=:1 1:? ( "error: separator is not an character\n":0 0:print exit )
+
+][
+= ? #(
+	0:=:2
+	1:=:2
+	// = print "\n" print
+	2:== ? (
+		// "is a separator\n" print
+		tokenize
+	) : (
+		// "is not a separator\n" print
+		0:=:3
+	)
+	!
+)
+tokenize
+
+5:#:5
+5:=:5
+5:? ( 5:#( 5:print ) )

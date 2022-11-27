@@ -1,0 +1,81 @@
+#!yasl
+{ "error: " print print "\n" print 1 exit } error_exit
+
+// in: [message: string]
+// message を表示し, ステータス1で終了する
+{ "error: " print print "\n" print 1 exit } error_exit
+
+{ 0 + } to_i
+{ "A" - 65 + } char_to_i
+
+// in use: c start end within
+// in:  [end: int, start: int, c: int]
+// out: [result: int(bool)]
+// `result` indicates that: start <= c && c <= end
+{
+	=:9 ! 2 ^ =:9 // in: [c, start], 9: [c, end]
+	<= // in: [start <= c], 9: [c, end]
+	9:>= // in: [start <= c, c <= end]
+	&&
+}	within
+
+// in:  [char: some]
+// out: [result: int(bool)]
+{
+	char_to_i "0" char_to_i "9" char_to_i within
+}	is_digit
+
+// in:  [arg: string]
+// out: [result: int(bool)]
+{
+	=:9 !
+	9:][:9
+	9:!
+	1:8
+	// in: [], 8: [result: int(bool)], 9: [...chars: string]
+	1 @ (
+		// in: []
+		9:# 0 > 8:= && = ? (
+			// ループ継続
+			// in: [true]
+			9:= 9:!
+			is_digit
+			? ( 1:8 ) : ( 0:8 ) 8:&&:8
+		) : (
+			// in: [false]
+			8:= 2 !^
+		)
+	)
+	8:!
+}	are_digits
+
+= 2 != ? ("usage: ./yasl_fact <num>" error_exit)
+
+! !
+=
+are_digits
+0 == ? ( "the argument doesn't seem to be an integer" error_exit )
+
+to_i
+= 0 < ? ( "the argument must be non-negative" error_exit )
+
+{
+ (= =):9
+ 1 2 ^
+ @(
+  9:=
+  * = 0 <= ? ("overflow" error_exit) 
+  9:(1 - =):9 9:=
+ )
+} factorial_iterative
+
+{
+ = 1 <= ? ( ! 1 )
+ : (
+  = 1 - factorial_recursive
+  * = 0 <= ? ("overflow" error_exit) 
+ )
+} factorial_recursive
+
+factorial_recursive print "\n" print
+// factorial_iterative print "\n" print
