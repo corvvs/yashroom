@@ -3,6 +3,5 @@
 # !^
 " " 2 !^
 " " 4 !^
-+ + + +
-eval
-print "\n" print
+# 1 - #+
+eval print "\n" print
