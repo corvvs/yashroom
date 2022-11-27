@@ -350,6 +350,112 @@ Programs = [
       },
     ],
   },
+
+  {
+    exe: "yasl_fact",
+    cases: [
+      {
+        name: "ok_0",
+        in: [0],
+        out: ["1"],
+      },
+      {
+        name: "ok_1",
+        in: [1],
+        out: ["1"],
+      },
+      {
+        name: "ok_2",
+        in: [2],
+        out: ["2"],
+      },
+      {
+        name: "ok_3",
+        in: [3],
+        out: ["6"],
+      },
+      {
+        name: "ok_4",
+        in: [4],
+        out: ["24"],
+      },
+      {
+        name: "ok_5",
+        in: [5],
+        out: ["120"],
+      },
+      {
+        name: "ok_9",
+        in: [9],
+        out: ["362880"],
+      },
+      {
+        name: "ok_10",
+        in: [10],
+        out: ["3628800"],
+      },
+      {
+        name: "ok_19",
+        in: [19],
+        out: ["121645100408832000"],
+      },
+      {
+        name: "ok_20",
+        in: [20],
+        out: ["2432902008176640000"],
+      },
+      {
+        name: "ko_overflow1",
+        in: [21],
+        exit: 1,
+      },
+      {
+        name: "ko_overflow2",
+        in: [22],
+        exit: 1,
+      },
+      {
+        name: "ko_overflow3",
+        in: [999999],
+        exit: 1,
+      },
+      {
+        name: "ko_noarg",
+        in: [],
+        exit: 1,
+      },
+      {
+        name: "ko_negative",
+        in: [-1],
+        exit: 1,
+      },
+      {
+        name: "ko_float",
+        in: [1.0],
+        exit: 1,
+      },
+      {
+        name: "ko_non_numeric1",
+        in: ["apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_non_numeric2",
+        in: ["12apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_non_numeric3",
+        in: ["apple3"],
+        exit: 1,
+      },
+      {
+        name: "ko_blank",
+        in: [""],
+        exit: 1,
+      },
+    ],
+  },
 ]
 
 def launch(script_name, cases)
