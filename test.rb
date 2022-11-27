@@ -271,6 +271,85 @@ Programs = [
       },
     ],
   },
+
+  {
+    exe: "yasl_repeat",
+    cases: [
+      {
+        name: "ok_basic1",
+        in: [1, "a"],
+        out: ["a"],
+      },
+      {
+        name: "ok_basic2",
+        in: [2, "a"],
+        out: ["aa"],
+      },
+      {
+        name: "ok_basic3",
+        in: [2, "a", "b", "c"],
+        out: ["aa", "bbb", "cccc"],
+      },
+      {
+        name: "ok_blank",
+        in: [2, "a", "", "c"],
+        out: ["aa", "", "cccc"],
+      },
+      {
+        name: "ok_pdf_1",
+        in: [4, "Bonjour", "how are you ?"],
+        out: [
+          "BonjourBonjourBonjourBonjour",
+          "how are you ?how are you ?how are you ?how are you ?how are you ?",
+        ],
+      },
+      {
+        name: "ok_pdf_2",
+        in: [1, "************", "******", "****", "---"],
+        out: [
+          "************",
+          "************",
+          "************",
+          "------------",
+        ],
+      },
+      {
+        name: "ko_zero",
+        in: [0, "apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_blank",
+        in: ["", "apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_negative",
+        in: [-1, "apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_negative2",
+        in: [-98, "apple"],
+        exit: 1,
+      },
+      {
+        name: "ko_non_numeric",
+        in: ["apple", "banana"],
+        exit: 1,
+      },
+      {
+        name: "ko_no_arg",
+        in: [],
+        exit: 1,
+      },
+      {
+        name: "ko_no_value",
+        in: [100],
+        exit: 1,
+      },
+    ],
+  },
 ]
 
 def launch(script_name, cases)
@@ -282,36 +361,42 @@ def launch(script_name, cases)
       result = (`./yasl #{script_name} #{c[:in].map{ |a| "\"#{a}\""}.join(" ")}; echo $?`).split(/(?<=\n)/)
       # 終了ステータスだけを分離
       actual_exit = result.pop.to_i
+
       # 出力を比較
       expected_lines = c[:out]
-      result.each_with_index { |actual_line, l|
-        expected_line = expected_lines[l]
-        # 出力行数 > 想定行数 の場合のエラー
-        if !expected_line 
-          raise "result is shorter than expected!!"
-        end
-        if expected_line.is_a?(String)
-          # 文字列比較
-          actual_line = actual_line.chomp
-          if actual_line != expected_line
-            raise "l:#{l + 1} differs: expected: #{expected_line}, actual: \"#{actual_line.gsub(/\n/, "\\n")}\""
+      if expected_lines
+        result.each_with_index { |actual_line, l|
+          expected_line = expected_lines[l]
+          # 出力行数 > 想定行数 の場合のエラー
+          if !expected_line 
+            raise "result is shorter than expected!!"
           end
-        else
-          # 正規表現マッチ
-          if !actual_line.match(expected_line)
-            raise "l:#{l + 1} differs: expected: #{expected_line}, actual: \"#{actual_line.gsub(/\n/, "\\n")}\""
+          if expected_line.is_a?(String)
+            # 文字列比較
+            actual_line = actual_line.chomp
+            if actual_line != expected_line
+              raise "l:#{l + 1} differs: expected: #{expected_line}, actual: \"#{actual_line.gsub(/\n/, "\\n")}\""
+            end
+          else
+            # 正規表現マッチ
+            if !actual_line.match(expected_line)
+              raise "l:#{l + 1} differs: expected: #{expected_line}, actual: \"#{actual_line.gsub(/\n/, "\\n")}\""
+            end
           end
+        }
+        # 出力行数 < 想定行数 の場合のエラー
+        if result.size < expected_lines.size
+          raise "result is longer than expected!!"
         end
-      }
-      # 出力行数 < 想定行数 の場合のエラー
-      if result.size < expected_lines.size
-        raise "result is longer than expected!!"
       end
+
+      # 終了ステータス
       expected_exit = c[:exit] || 0
       if expected_exit != actual_exit
         raise "exit status differs: expected: #{expected_exit}, actual: #{actual_exit}"
       end
       puts "#{TEXT_GREEN}ok#{TEXT_RESET}"
+
     rescue => e
       puts "#{TEXT_RED}KO: #{e}#{TEXT_RESET}"
       kos += 1
