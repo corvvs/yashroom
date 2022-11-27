@@ -551,6 +551,88 @@ Programs = [
       },
     ],
   },
+
+  {
+    exe: "mandel",
+    cases: [
+      {
+        name: "ok_32_32",
+        in: [32, 32],
+      },
+      {
+        name: "ok_80_80",
+        in: [80, 80],
+      },
+      # {
+      #   name: "ok_128_128",
+      #   in: [128, 128],
+      # },
+      {
+        name: "ok_1_2",
+        in: [1, 2],
+      },
+      {
+        name: "ko_0_32",
+        in: [0, 32],
+        exit: 1,
+      },
+      {
+        name: "ko_32_0",
+        in: [32, 0],
+        exit: 1,
+      },
+      {
+        name: "ko_0_0",
+        in: [0, 0],
+        exit: 1,
+      },
+      {
+        name: "ko_-32_32",
+        in: [-32, 32],
+        exit: 1,
+      },
+      {
+        name: "ko_32_-32",
+        in: [32, -32],
+        exit: 1,
+      },
+      {
+        name: "ko_32.0_32",
+        in: [32.0, 32],
+        exit: 1,
+      },
+      {
+        name: "ko_a_b",
+        in: ["a", "b"],
+        exit: 1,
+      },
+      {
+        name: "ko_no_arg",
+        in: [],
+        exit: 1,
+      },
+      {
+        name: "ko_an_arg",
+        in: [32],
+        exit: 1,
+      },
+      {
+        name: "ko_3_args",
+        in: [32, 32, 32],
+        exit: 1,
+      },
+      {
+        name: "ko_blank1",
+        in: ["", 32],
+        exit: 1,
+      },
+      {
+        name: "ko_blank2",
+        in: ["", ""],
+        exit: 1,
+      },
+    ],
+  }
 ]
 
 def launch(script_name, cases)

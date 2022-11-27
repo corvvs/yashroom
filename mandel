@@ -3,7 +3,50 @@
 // エラーメッセージを表示してexitする
 // スタックが [message, exit_status] のとき,
 // message が表示され, 終了ステータスは exit_status.
-{ print "\n":0 0:print exit } error_exit
+{ "error: " print print "\n" print 1 exit } error_exit
+
+{ "A" - 65 + } char_to_i
+
+// in use: c start end within
+// in:  [end: int, start: int, c: int]
+// out: [result: int(bool)]
+// `result` indicates that: start <= c && c <= end
+{
+	=:9 ! 2 ^ =:9 // in: [c, start], 9: [c, end]
+	<= // in: [start <= c], 9: [c, end]
+	9:>= // in: [start <= c, c <= end]
+	&&
+}	within
+
+// in:  [char: some]
+// out: [result: int(bool)]
+{
+	char_to_i "0" char_to_i "9" char_to_i within
+}	is_digit
+
+// in:  [arg: string]
+// out: [result: int(bool)]
+{
+	=:9 !
+	9:][:9
+	9:!
+	1:8
+	// in: [], 8: [result: int(bool)], 9: [...chars: string]
+	1 @ (
+		// in: []
+		9:# 0 > 8:= && = ? (
+			// ループ継続
+			// in: [true]
+			9:= 9:!
+			is_digit
+			? ( 1:8 ) : ( 0:8 ) 8:&&:8
+		) : (
+			// in: [false]
+			8:= 2 !^
+		)
+	)
+	8:!
+}	are_digits
 
 // 指定したスタックの要素数を出力する
 // スタックが [stack_no] のとき, スタック stack_no の要素数を出力する
@@ -163,18 +206,23 @@
 	!
 	9:(= !)
 }	make_escape_sequence
+
+{
+	[#] 0 <= ? ( "blank string?" error_exit )
+	= are_digits 0 == ? ( "not an integer?" error_exit )
+	eval
+	is_valid_size
+}	is_a_positive_integer
 // ---------------------------------------------------------------
 
 // argc = 3 であることを確認
 3 != ? (1 "just 2 arguments are needed!!" error_exit)
 
 !
-eval
-is_valid_size
+is_a_positive_integer
 =:8
 !
-eval
-is_valid_size
+is_a_positive_integer
 =:9
 !
 
