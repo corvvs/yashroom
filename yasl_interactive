@@ -1,0 +1,8 @@
+#!yasl
+#!
+1 @(
+ read
+ 0 == ? exit
+ eval
+ 1
+)

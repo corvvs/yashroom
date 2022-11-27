@@ -1,0 +1,14 @@
+#!yasl
+{ "error: " print print "\n" print 1 exit } error_exit
+{ = = 0 + "" + != ? ("invalid int argument" error_exit) 0 + } to_i
+
+3 < ? ("usage: ./yasl_repeat <start_num> <value1> ..." error_exit)
+! to_i
+= 1 < ? ("<start_num> must be >= 1" error_exit)
+
+=:1 !
+# #(
+ 1:= #(= print) "\n" print
+ !
+ 1:(1 +):1
+)
