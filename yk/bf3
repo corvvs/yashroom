@@ -2,22 +2,30 @@
 
 // スタック3つでBrainf**k (目標)
 
+// in:  [str: string]
+// out: []
 {
 	print "\n" print
 } puts
 
+// in:  [char: byte]
+// out: [i: int]
 {
 	"A" - 65 +
 } char_to_i
 
+// in:  [ptr: int]
+// out: []
 {
 	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
 	2 ^
 	256 %
 	]#[
 	print
-}	putchar
+}	putchar_atptr
 
+// in:  []
+// out: [char: byte]
 {
 	! (
 		read
@@ -27,30 +35,44 @@
 	char_to_i 
 }	getchar
 
+// in:  [1-index: int, ...memory: byte]
+// out: [...memory: byte]
 {
 	1 + ^
 }	popup_item
 
+// in: [1-index: int, ...memory: byte]
+// out: [...memory: byte]
 {
 	1 + !^
 }	pushdown_item
 
+// in:  [data: byte]
+// out: [data: byte]
 {
 	1 + 256 % 
 }	increment_byte
 
+// in:  [data: byte]
+// out: [data: byte]
 {
 	1 - 256 + 256 % 
 }	decrement_byte
 
+// in:  [ptr: int]
+// out: [ptr: int]
 {
 	1 - (1 + 30000 % ) 1 +
 }	increment_ptr
 
+// in:  [ptr: int]
+// out: [ptr: int]
 {
 	1 - (1 - 30000 + 30000 % ) 1 +
 }	decrement_ptr
 
+// in:  [current_pc: int, ...pcs: int]
+// out: [current_pc: int, ...pcs: int]
 {
 	2:(1 +):2
 	1:0
@@ -118,7 +140,7 @@
 			!
 			9:(
 				(0:= popup_item)
-				(= putchar)
+				(= putchar_atptr)
 				(0:= pushdown_item)
 			):9
 			_increment_pc
