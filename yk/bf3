@@ -1,5 +1,7 @@
 #!yasl
 
+// スタック3つでBrainf**k (目標)
+
 {
 	print "\n" print
 } puts
@@ -18,6 +20,8 @@
 	"_" +
 } read_out
 
+{ "A" - 65 + } char_to_i
+
 {
 	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
 	2 ^
@@ -33,7 +37,14 @@
 	1 + !^
 }	pushdown_item
 
-{ "A" - 65 + } char_to_i
+{
+	2:(1 +):2
+	1:0
+}	_increment_pc
+
+{ 0:(2 ^ ! 1 2 !^):0 } _start_forward_jump
+{ 0:(2 ^ ! 0 2 !^):0 } _stop_forward_jump
+
 
 // -------------------------------------------------------------
 
@@ -43,40 +54,54 @@
 (! ! =:1 !)
 1:("_" +):1
 
-// 0: [ptr: int]
-1
+// 0: [ptr: int, forward_jump: int]
+0:(0 1):0
 
 // 2: [pc int, ...]
-0:2
+2:(0):2
 
 // 9: [memory: int[30000]]
 9:(30000 #(0)):9
 
 {
 	2:=:2
-	// 0: [ptr: int]
-	// 9: [memory: int[30000]]
+	// 0: [ptr: int, forward_jump: int]
+	// 1: [code: string]
 	// 2: [pc_in_local: int, pc_at_start: int, ...]
+	// 9: [memory: int[30000]]
 	1 @(
 		2:=:1 1:%]#[ 1:!
 
-		// 0: [op, ...]
-		// (= "op is: \"" 2 ^ + "\"" + puts )
 		(= "_" == ) ? (
 			// ("program end" puts)
 			0
+		) : (
+		// check forward_jump
+		// - ジャンプモードなら:
+		//   - op が "]"なら停止
+		//   - そうでないならpcを1増やす
+		// - そうでないなら: 次の評価へ移る
+		(3 ^ = 4 !^) ? (
+			// ("in jumping" puts)
+			// 0: [op, ptr, jump]
+			("]" == ) ? (
+				// 0: [ptr, jump]
+				// ("stop jump!!" puts)
+				_stop_forward_jump
+			)
+			_increment_pc
 		) : (
 		(= ">" == ) ? (
 			// "<": increment ptr
 			// ("increment ptr" puts)
 			! 1 +
-			1
+			_increment_pc
 		) : (
 		(= "<" == ) ? (
 			// ">": decrement ptr
 			// ("decrement ptr" puts)
 			! 1 -
-			1
+			_increment_pc
 		) : (
 		(= "+" == ) ? (
 			// ("increment *ptr" puts)
@@ -86,27 +111,35 @@
 				1 +                 // increment item
 				(0:= pushdown_item) // back item
 			):9
-			1
+			_increment_pc
 		) : (
 		(= "-" == ) ? (
 			// ("decrement *ptr" puts)
 			!
 			9:(
+				// ("ptr: " print)
+				// (0:= puts)
 				(0:= popup_item)    // front item
+				// ("value before: " print)
+				// (= puts)
 				1 -                 // decrement item
+				// ("value after: " print)
+				// (= puts)
 				(0:= pushdown_item) // back item
 			):9
-			1
+			_increment_pc
 		) : (
 		(= "." == ) ? (
 			// ("output *ptr" puts)
 			!
 			9:(
+				// ("ptr: " print)
+				// (0:= puts)
 				(0:= popup_item)    // front item
 				(= putchar)
 				(0:= pushdown_item) // back item
 			):9
-			1
+			_increment_pc
 		) : (
 		(= "," == ) ? (
 			// ("read a byte and set into *ptr" puts)
@@ -121,18 +154,59 @@
 				char_to_i  // read char
 				(0:= pushdown_item) // back item
 			):9
-			1
+			_increment_pc
 		) : (
-			! 1
-		)))))))
-
-		? (
-			// "increment pc" puts
-			2:(1 +):2
-			1
-		) : 0
+		(= "[" == ) ? (
+			// ("conditional forward jump to ]" puts)
+			!
+			9:(
+				// ("ptr: " print)
+				// (0:= puts)
+				(0:= popup_item)    // front item
+				// ("value: " print)
+				// (= puts)
+				(= 0 ==) ? (
+					// jump!!
+					// ("start jump!!" puts)
+					_start_forward_jump
+				) : (
+					// ("in block" puts)
+					2:(=):2
+				)
+				(0:= pushdown_item) // back item
+			):9
+			_increment_pc
+		) : (
+		(= "]" == ) ? (
+			// ("conditional backward jump to [" puts)
+			!
+			9:(
+				// ("ptr: " print)
+				// (0:= puts)
+				(0:= popup_item)    // front item
+				// ("value: " print)
+				// (= puts)
+				(= 0 !=) ? (
+					// jump!!
+					// ("back jump!!" puts)
+					// ("pc: " print)
+					// 2:(= print):2
+					// (" -> " print)
+					2:(! =):2
+					// 2:(= puts):2
+				) : (
+					// ("out block" puts)
+					2:(2 ^ !):2
+				)
+				(0:= pushdown_item) // back item
+			):9
+			_increment_pc
+		) : (
+			!
+			_increment_pc
+		))))))))))
 	)
 } interpret
 
-1:(= puts):1
+// 1:(= puts):1
 0:interpret:0
