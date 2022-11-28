@@ -90,7 +90,7 @@
 }	_stop_forward_jump
 
 {
-	2:=:9 9:%]#[ 9:!
+	2:=:1 1:%]#[ 1:!
 }	_get_op_at_pc
 
 {
@@ -106,7 +106,7 @@
 	// 0: [ptr: int, forward_jump: int]
 	// 1: [code: string]
 	// 2: [pc_in_local: int, pc_at_start: int, ...]
-	// 9: [memory: int[30000]]
+	// 1: [memory: int[30000]]
 	_continue_loop
 	@(
 		_get_op_at_pc
@@ -142,51 +142,51 @@
 		(= "+" == ) ? (
 			// ("increment *ptr" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				increment_byte
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
 		(= "-" == ) ? (
 			// ("decrement *ptr" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				decrement_byte
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
 		(= "." == ) ? (
 			// ("output *ptr" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				(= putchar_atptr)
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
 		(= "," == ) ? (
 			// ("read a byte and set into *ptr" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				getchar
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
 		(= "[" == ) ? (
 			// ("conditional forward jump to ]" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				(= 0 ==) ? (
 					_start_forward_jump
@@ -194,14 +194,14 @@
 					2:(=):2
 				)
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
 		(= "]" == ) ? (
 			// ("conditional backward jump to [" puts)
 			!
-			9:(
+			1:(
 				(0:= popup_item)
 				(= 0 !=) ? (
 					2:(! =):2
@@ -209,7 +209,7 @@
 					2:(2 ^ !):2
 				)
 				(0:= pushdown_item)
-			):9
+			):1
 			_increment_pc
 			_continue_loop
 		) : (
@@ -222,16 +222,16 @@
 
 // -------------------------------------------------------------
 
-// 9: [code: string]
-(! ! =:9 !)
-9:("_" +):9
+// 1: [code: string]
+(! ! =:1 !)
+1:("_" +):1
 // 0: [ptr: int, forward_jump: int]
 0:(0 0):0
 // 2: [pc int, ...]
 2:(0):2
-// 9: [memory: int[30000], code: string]
-9:(30000 2 + #(0)):9
-// 9: [code: string, memory: int[30000]]
-9:(# ^ = puts):9
+// 1: [memory: int[30000], code: string]
+1:(30000 2 + #(0)):1
+// 1: [code: string, memory: int[30000]]
+1:(# ^ = puts):1
 
 0:interpret:0
