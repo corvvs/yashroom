@@ -27,25 +27,37 @@
 // in:  []
 // out: [char: byte]
 {
-	! (
-		read
-		!
+	!
+	read
+	? (
 		0 ]#[
-	)
-	char_to_i 
+		char_to_i 
+	) : 0
 }	getchar
 
 // in:  [1-index: int, ...memory: byte]
 // out: [...memory: byte]
 {
-	1 + ^
+	2 + ^
 }	popup_item
 
 // in: [1-index: int, ...memory: byte]
 // out: [...memory: byte]
 {
-	1 + !^
+	2 + !^
 }	pushdown_item
+
+// in:  [ptr: int]
+// out: [ptr: int]
+{
+	(1 + 30000 % )
+}	increment_ptr
+
+// in:  [ptr: int]
+// out: [ptr: int]
+{
+	(1 - 30000 + 30000 % )
+}	decrement_ptr
 
 // in:  [data: byte]
 // out: [data: byte]
@@ -59,27 +71,35 @@
 	1 - 256 + 256 % 
 }	decrement_byte
 
-// in:  [ptr: int]
-// out: [ptr: int]
-{
-	1 - (1 + 30000 % ) 1 +
-}	increment_ptr
-
-// in:  [ptr: int]
-// out: [ptr: int]
-{
-	1 - (1 - 30000 + 30000 % ) 1 +
-}	decrement_ptr
-
 // in:  [current_pc: int, ...pcs: int]
 // out: [current_pc: int, ...pcs: int]
 {
 	2:(1 +):2
-	1:0
 }	_increment_pc
 
-{ 0:(2 ^ ! 1 2 !^):0 } _start_forward_jump
-{ 0:(2 ^ ! 0 2 !^):0 } _stop_forward_jump
+// in:  [ptr: int, forward_jump: int]
+// out: [ptr: int, 1]
+{
+	0:(2 ^ ! 1 2 !^):0
+}	_start_forward_jump
+
+// in:  [ptr: int, forward_jump: int]
+// out: [ptr: int, 0]
+{
+	0:(2 ^ ! 0 2 !^):0
+}	_stop_forward_jump
+
+{
+	2:=:1 1:%]#[ 1:!
+}	_get_op_at_pc
+
+{
+	1:0
+}	_continue_loop
+
+{
+	0:0
+}	_exit_loop
 
 {
 	2:=:2
@@ -87,12 +107,13 @@
 	// 1: [code: string]
 	// 2: [pc_in_local: int, pc_at_start: int, ...]
 	// 9: [memory: int[30000]]
-	1 @(
-		2:=:1 1:%]#[ 1:!
+	_continue_loop
+	@(
+		_get_op_at_pc
 
 		(= "_" == ) ? (
 			// ("program end" puts)
-			0
+			_exit_loop
 		) : (
 		// check forward_jump
 		// - ジャンプモードなら:
@@ -104,16 +125,19 @@
 				_stop_forward_jump
 			)
 			_increment_pc
+			_continue_loop
 		) : (
 		(= ">" == ) ? (
 			// ("increment ptr" puts)
 			! increment_ptr
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "<" == ) ? (
 			// ("decrement ptr" puts)
 			! decrement_ptr
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "+" == ) ? (
 			// ("increment *ptr" puts)
@@ -124,6 +148,7 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "-" == ) ? (
 			// ("decrement *ptr" puts)
@@ -134,6 +159,7 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "." == ) ? (
 			// ("output *ptr" puts)
@@ -144,6 +170,7 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "," == ) ? (
 			// ("read a byte and set into *ptr" puts)
@@ -154,6 +181,7 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "[" == ) ? (
 			// ("conditional forward jump to ]" puts)
@@ -168,6 +196,7 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 		(= "]" == ) ? (
 			// ("conditional backward jump to [" puts)
@@ -182,9 +211,11 @@
 				(0:= pushdown_item)
 			):9
 			_increment_pc
+			_continue_loop
 		) : (
 			!
 			_increment_pc
+			_continue_loop
 		))))))))))
 	)
 } interpret
@@ -195,7 +226,7 @@
 (! ! =:1 !)
 1:("_" +):1
 // 0: [ptr: int, forward_jump: int]
-0:(0 1):0
+0:(0 0):0
 // 2: [pc int, ...]
 2:(0):2
 // 9: [memory: int[30000]]
