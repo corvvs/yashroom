@@ -1,0 +1,102 @@
+#!yasl
+
+{
+	print "\n" print
+} puts
+
+{
+	""
+	1 @(
+		read ? (
+			+
+			1
+		) : (
+			!
+			0
+		)
+	)
+	"_" +
+} read_out
+
+
+// 1: [code: string]
+(! ! =:1 !)
+1:("_" +):1
+// 0: [pc: int, ptr: int]
+1 0
+// 8: ascii table
+"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 ":8
+
+// 9: [memory: int[30000]]
+9:(30000 #(0)):9
+
+{
+	=:2 !
+	2:=:2
+	// 0: [ptr: int]
+	// 9: [memory: int[30000]]
+	// 2: [pc_in_local: int, pc_at_start: int, ...]
+	1 @(
+		2:=:1 1:%]#[ 1:!
+
+		// 0: [op, ...]
+		// (= "op is: \"" 2 ^ + "\"" + puts )
+		(= "_" == ) ? (
+			// ("program end" puts)
+			0
+		) : (
+		(= ">" == ) ? (
+			// "<": increment ptr
+			// ("increment ptr" puts)
+			! 1 +
+			1
+		) : (
+		(= "<" == ) ? (
+			// ">": decrement ptr
+			// ("decrement ptr" puts)
+			! 1 -
+			1
+		) : (
+		(= "+" == ) ? (
+			// ("increment *ptr" puts)
+			!
+			9:(
+				0:= 1 + ^  // front item
+				1 +        // increment item
+				0:= 1 + !^ // back item
+			):9
+			1
+		) : (
+		(= "-" == ) ? (
+			// ("decrement *ptr" puts)
+			!
+			9:(
+				0:= 1 + ^  // front item
+				1 -        // decrement item
+				0:= 1 + !^ // back item
+			):9
+			1
+		) : (
+		(= "." == ) ? (
+			// ("output *ptr" puts)
+			!
+			9:(
+				0:= 1 + ^  // front item
+				8:(9:= %]#[ print !):8
+				0:= 1 + !^ // back item
+			):9
+			1
+		) : (
+			! 1
+		))))))
+
+		? (
+			// "increment pc" puts
+			2:(1 +):2
+			1
+		) : 0
+	)
+} interpret
+
+1:(= puts):1
+0:interpret:0
