@@ -38,13 +38,13 @@
 // in:  [1-index: int, ...memory: byte]
 // out: [...memory: byte]
 {
-	2 + ^
+	3 + ^
 }	popup_item
 
 // in: [1-index: int, ...memory: byte]
 // out: [...memory: byte]
 {
-	2 + !^
+	3 + !^
 }	pushdown_item
 
 // in:  [ptr: int]
@@ -90,7 +90,7 @@
 }	_stop_forward_jump
 
 {
-	2:=:1 1:%]#[ 1:!
+	2:=:9 9:%]#[ 9:!
 }	_get_op_at_pc
 
 {
@@ -222,14 +222,16 @@
 
 // -------------------------------------------------------------
 
-// 1: [code: string]
-(! ! =:1 !)
-1:("_" +):1
+// 9: [code: string]
+(! ! =:9 !)
+9:("_" +):9
 // 0: [ptr: int, forward_jump: int]
 0:(0 0):0
 // 2: [pc int, ...]
 2:(0):2
-// 9: [memory: int[30000]]
-9:(30000 1 + #(0)):9
+// 9: [memory: int[30000], code: string]
+9:(30000 2 + #(0)):9
+// 9: [code: string, memory: int[30000]]
+9:(# ^ = puts):9
 
 0:interpret:0
