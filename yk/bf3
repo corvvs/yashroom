@@ -25,6 +25,7 @@
 {
 	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
 	2 ^
+	256 %
 	]#[
 	print
 }	putchar
@@ -38,30 +39,28 @@
 }	pushdown_item
 
 {
+	1 + 256 % 
+}	increment_byte
+
+{
+	1 - 256 + 256 % 
+}	decrement_byte
+
+{
+	1 - (1 + 30000 % ) 1 +
+}	increment_ptr
+
+{
+	1 - (1 - 30000 + 30000 % ) 1 +
+}	decrement_ptr
+
+{
 	2:(1 +):2
 	1:0
 }	_increment_pc
 
 { 0:(2 ^ ! 1 2 !^):0 } _start_forward_jump
 { 0:(2 ^ ! 0 2 !^):0 } _stop_forward_jump
-
-
-// -------------------------------------------------------------
-
-// deploy stacks
-
-// 1: [code: string]
-(! ! =:1 !)
-1:("_" +):1
-
-// 0: [ptr: int, forward_jump: int]
-0:(0 1):0
-
-// 2: [pc int, ...]
-2:(0):2
-
-// 9: [memory: int[30000]]
-9:(30000 #(0)):9
 
 {
 	2:=:2
@@ -94,13 +93,15 @@
 		(= ">" == ) ? (
 			// "<": increment ptr
 			// ("increment ptr" puts)
-			! 1 +
+			! increment_ptr
+			// (= puts)
 			_increment_pc
 		) : (
 		(= "<" == ) ? (
 			// ">": decrement ptr
 			// ("decrement ptr" puts)
-			! 1 -
+			! decrement_ptr
+			// (= puts)
 			_increment_pc
 		) : (
 		(= "+" == ) ? (
@@ -108,7 +109,7 @@
 			!
 			9:(
 				(0:= popup_item)    // front item
-				1 +                 // increment item
+				increment_byte
 				(0:= pushdown_item) // back item
 			):9
 			_increment_pc
@@ -122,7 +123,7 @@
 				(0:= popup_item)    // front item
 				// ("value before: " print)
 				// (= puts)
-				1 -                 // decrement item
+				decrement_byte
 				// ("value after: " print)
 				// (= puts)
 				(0:= pushdown_item) // back item
@@ -207,6 +208,23 @@
 		))))))))))
 	)
 } interpret
+
+// -------------------------------------------------------------
+
+// deploy stacks
+
+// 1: [code: string]
+(! ! =:1 !)
+1:("_" +):1
+
+// 0: [ptr: int, forward_jump: int]
+0:(0 1):0
+
+// 2: [pc int, ...]
+2:(0):2
+
+// 9: [memory: int[30000]]
+9:(30001 #(0)):9
 
 // 1:(= puts):1
 0:interpret:0
