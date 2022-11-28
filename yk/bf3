@@ -7,20 +7,8 @@
 } puts
 
 {
-	""
-	1 @(
-		read ? (
-			+
-			1
-		) : (
-			!
-			0
-		)
-	)
-	"_" +
-} read_out
-
-{ "A" - 65 + } char_to_i
+	"A" - 65 +
+} char_to_i
 
 {
 	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
@@ -29,6 +17,15 @@
 	]#[
 	print
 }	putchar
+
+{
+	! (
+		read
+		!
+		0 ]#[
+	)
+	char_to_i 
+}	getchar
 
 {
 	1 + ^
@@ -81,36 +78,28 @@
 		//   - そうでないならpcを1増やす
 		// - そうでないなら: 次の評価へ移る
 		(3 ^ = 4 !^) ? (
-			// ("in jumping" puts)
-			// 0: [op, ptr, jump]
 			("]" == ) ? (
-				// 0: [ptr, jump]
-				// ("stop jump!!" puts)
 				_stop_forward_jump
 			)
 			_increment_pc
 		) : (
 		(= ">" == ) ? (
-			// "<": increment ptr
 			// ("increment ptr" puts)
 			! increment_ptr
-			// (= puts)
 			_increment_pc
 		) : (
 		(= "<" == ) ? (
-			// ">": decrement ptr
 			// ("decrement ptr" puts)
 			! decrement_ptr
-			// (= puts)
 			_increment_pc
 		) : (
 		(= "+" == ) ? (
 			// ("increment *ptr" puts)
 			!
 			9:(
-				(0:= popup_item)    // front item
+				(0:= popup_item)
 				increment_byte
-				(0:= pushdown_item) // back item
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -118,15 +107,9 @@
 			// ("decrement *ptr" puts)
 			!
 			9:(
-				// ("ptr: " print)
-				// (0:= puts)
-				(0:= popup_item)    // front item
-				// ("value before: " print)
-				// (= puts)
+				(0:= popup_item)
 				decrement_byte
-				// ("value after: " print)
-				// (= puts)
-				(0:= pushdown_item) // back item
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -134,11 +117,9 @@
 			// ("output *ptr" puts)
 			!
 			9:(
-				// ("ptr: " print)
-				// (0:= puts)
-				(0:= popup_item)    // front item
+				(0:= popup_item)
 				(= putchar)
-				(0:= pushdown_item) // back item
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -146,14 +127,9 @@
 			// ("read a byte and set into *ptr" puts)
 			!
 			9:(
-				(0:= popup_item)    // front item
-				! (
-					read
-					!
-					0 ]#[
-				)
-				char_to_i  // read char
-				(0:= pushdown_item) // back item
+				(0:= popup_item)
+				getchar
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -161,20 +137,13 @@
 			// ("conditional forward jump to ]" puts)
 			!
 			9:(
-				// ("ptr: " print)
-				// (0:= puts)
-				(0:= popup_item)    // front item
-				// ("value: " print)
-				// (= puts)
+				(0:= popup_item)
 				(= 0 ==) ? (
-					// jump!!
-					// ("start jump!!" puts)
 					_start_forward_jump
 				) : (
-					// ("in block" puts)
 					2:(=):2
 				)
-				(0:= pushdown_item) // back item
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -182,24 +151,13 @@
 			// ("conditional backward jump to [" puts)
 			!
 			9:(
-				// ("ptr: " print)
-				// (0:= puts)
-				(0:= popup_item)    // front item
-				// ("value: " print)
-				// (= puts)
+				(0:= popup_item)
 				(= 0 !=) ? (
-					// jump!!
-					// ("back jump!!" puts)
-					// ("pc: " print)
-					// 2:(= print):2
-					// (" -> " print)
 					2:(! =):2
-					// 2:(= puts):2
 				) : (
-					// ("out block" puts)
 					2:(2 ^ !):2
 				)
-				(0:= pushdown_item) // back item
+				(0:= pushdown_item)
 			):9
 			_increment_pc
 		) : (
@@ -211,20 +169,14 @@
 
 // -------------------------------------------------------------
 
-// deploy stacks
-
 // 1: [code: string]
 (! ! =:1 !)
 1:("_" +):1
-
 // 0: [ptr: int, forward_jump: int]
 0:(0 1):0
-
 // 2: [pc int, ...]
 2:(0):2
-
 // 9: [memory: int[30000]]
-9:(30001 #(0)):9
+9:(30000 1 + #(0)):9
 
-// 1:(= puts):1
 0:interpret:0
