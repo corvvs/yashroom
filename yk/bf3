@@ -25,17 +25,34 @@
 	print
 }	putchar
 
+{
+	1 + ^
+}	popup_item
+
+{
+	1 + !^
+}	pushdown_item
+
+{ "A" - 65 + } char_to_i
+
+// -------------------------------------------------------------
+
+// deploy stacks
+
 // 1: [code: string]
 (! ! =:1 !)
 1:("_" +):1
-// 0: [pc: int, ptr: int]
-1 0
+
+// 0: [ptr: int]
+1
+
+// 2: [pc int, ...]
+0:2
 
 // 9: [memory: int[30000]]
 9:(30000 #(0)):9
 
 {
-	=:2 !
 	2:=:2
 	// 0: [ptr: int]
 	// 9: [memory: int[30000]]
@@ -65,9 +82,9 @@
 			// ("increment *ptr" puts)
 			!
 			9:(
-				0:= 1 + ^  // front item
-				1 +        // increment item
-				0:= 1 + !^ // back item
+				(0:= popup_item)    // front item
+				1 +                 // increment item
+				(0:= pushdown_item) // back item
 			):9
 			1
 		) : (
@@ -75,9 +92,9 @@
 			// ("decrement *ptr" puts)
 			!
 			9:(
-				0:= 1 + ^  // front item
-				1 -        // decrement item
-				0:= 1 + !^ // back item
+				(0:= popup_item)    // front item
+				1 -                 // decrement item
+				(0:= pushdown_item) // back item
 			):9
 			1
 		) : (
@@ -85,14 +102,29 @@
 			// ("output *ptr" puts)
 			!
 			9:(
-				0:= 1 + ^  // front item
-				= putchar
-				0:= 1 + !^ // back item
+				(0:= popup_item)    // front item
+				(= putchar)
+				(0:= pushdown_item) // back item
+			):9
+			1
+		) : (
+		(= "," == ) ? (
+			// ("read a byte and set into *ptr" puts)
+			!
+			9:(
+				(0:= popup_item)    // front item
+				! (
+					read
+					!
+					0 ]#[
+				)
+				char_to_i  // read char
+				(0:= pushdown_item) // back item
 			):9
 			1
 		) : (
 			! 1
-		))))))
+		)))))))
 
 		? (
 			// "increment pc" puts
