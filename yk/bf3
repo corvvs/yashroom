@@ -18,14 +18,18 @@
 	"_" +
 } read_out
 
+{
+	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
+	2 ^
+	]#[
+	print
+}	putchar
 
 // 1: [code: string]
 (! ! =:1 !)
 1:("_" +):1
 // 0: [pc: int, ptr: int]
 1 0
-// 8: ascii table
-"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 ":8
 
 // 9: [memory: int[30000]]
 9:(30000 #(0)):9
@@ -82,7 +86,7 @@
 			!
 			9:(
 				0:= 1 + ^  // front item
-				8:(9:= %]#[ print !):8
+				= putchar
 				0:= 1 + !^ // back item
 			):9
 			1
