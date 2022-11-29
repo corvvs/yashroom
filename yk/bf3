@@ -14,15 +14,27 @@
 	"A" - 65 +
 } char_to_i
 
-// in:  [ptr: int]
+// in:  [char: byte]
 // out: []
 {
 	"\0         \n                      !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~                                                                                                                                 "
 	2 ^
-	256 %
 	]#[
 	print
+}	putchar
+
+// in:  [ptr: int]
+// out: []
+{
+	256 % putchar
 }	putchar_atptr
+
+// in:  [n: int, some: any]
+// out: []
+{
+	= 0 > ? #( = print )
+	!
+}	print_ntimes
 
 // in:  []
 // out: [char: byte]
@@ -89,6 +101,12 @@
 	0:(2 ^ ! 0 2 !^):0
 }	_stop_forward_jump
 
+// in:  [op: byte, ptr: int, forward_jump: int]
+// out: [forward_jump: int, op: byte, ptr: int, forward_jump: int]
+{
+	3 ^ = 4 !^
+}	_is_forward_jumping
+
 {
 	2:=:1 1:%]#[ 1:!
 }	_get_op_at_pc
@@ -102,7 +120,7 @@
 }	_exit_loop
 
 {
-	2:=:2
+	0:2
 	// 0: [ptr: int, forward_jump: int]
 	// 1: [code: string]
 	// 2: [pc_in_local: int, pc_at_start: int, ...]
@@ -116,17 +134,35 @@
 			_exit_loop
 		) : (
 		// check forward_jump
-		// - ジャンプモードなら:
-		//   - op が "]"なら停止
-		//   - そうでないならpcを1増やす
-		// - そうでないなら: 次の評価へ移る
-		(3 ^ = 4 !^) ? (
-			("]" == ) ? (
-				_stop_forward_jump
-			)
+		_is_forward_jumping ? (
+			(= "]" == ) ? (
+				!
+				// op が "]"
+				// -> forward_jump をデクリメント
+				// -> forward_jump が0ならジャンプ終了
+				(2 ^ 1 -  = ) ? (
+					2 !^
+					// 2:("-" print):2
+				) : (
+					2 !^
+					_stop_forward_jump
+					// 2:(" -> " print = print ":" print # puts):2
+					// 2:(# print):2
+				)
+			) : (
+			(= "[" == ) ? (
+				!
+				// op が "["
+				// -> forward_jump をインクリメント
+				(2 ^ 1 + 2 !^)
+			) : (
+				!
+				// 2:("-" print):2
+			))
 			_increment_pc
 			_continue_loop
 		) : (
+		// 2:(# print):2
 		(= ">" == ) ? (
 			// ("increment ptr" puts)
 			! increment_ptr
@@ -189,9 +225,15 @@
 			1:(
 				(0:= popup_item)
 				(= 0 ==) ? (
+					// ("[over block]" puts)
+					// 2:(= print ":" print # print):2
 					_start_forward_jump
 				) : (
+					// ("[in block]" puts)
+					// 2:(= print ":" print # print):2
 					2:(=):2
+					// 2:(" -> " print = print ":" print # puts):2
+					// 2:("" puts = " " 2 ^ 1 + print_ntimes):2
 				)
 				(0:= pushdown_item)
 			):1
@@ -204,9 +246,17 @@
 			1:(
 				(0:= popup_item)
 				(= 0 !=) ? (
+					// ("[redo block]" puts)
+					// 2:(= print ":" print # print):2
 					2:(! =):2
+					// 2:(" -> " print = print ":" print # puts):2
+					// 2:("" puts = " " 2 ^ 1 + print_ntimes):2
 				) : (
+					// ("[out block]" puts)
+					// 2:(= print ":" print # print):2
+					// 2:("" puts = " " 2 ^ 1 + print_ntimes):2
 					2:(2 ^ !):2
+					// 2:(" -> " print = print ":" print # puts):2
 				)
 				(0:= pushdown_item)
 			):1
@@ -232,6 +282,5 @@
 // 0: [ptr: int, forward_jump: int]
 0:(0 0):0
 // 2: [pc int, ...]
-2:(0):2
-
+// 1:(= puts):1
 0:interpret:0
